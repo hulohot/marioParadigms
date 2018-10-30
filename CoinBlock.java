@@ -41,11 +41,14 @@ public class CoinBlock extends Sprite{
 		}
 	}
 	
-	CoinBlock(CoinBlock c) {
+	CoinBlock(CoinBlock c, Model m) {
     	this.x = c.x;
     	this.y = c.y;
     	this.w = c.w;
     	this.h = c.h;
+    	this.coinBlockVal = c.coinBlockVal;
+    	this.coinImgVal = c.coinImgVal;
+    	this.model = m;
     }
 	
 	public void reduceCoins() {
@@ -61,9 +64,10 @@ public class CoinBlock extends Sprite{
 	// Checks if bottom of block is hit and spawns coin
 	public void spawnCoin() {
 		if(coinBlockVal > 0) {
-			model.addCoin(x - Model.cameraPos, y - 50, w, h);
+			model.addCoin(x - model.cameraPos, y - 50, w, h);
 			reduceCoins();
 			coin.play();
+			model.coinCount++;
 		}
 	}
 	
@@ -75,7 +79,7 @@ public class CoinBlock extends Sprite{
 	@Override
 	public void draw(Graphics g) {
 		// TODO Auto-generated method stub
-		g.drawImage(View.coinBlocks[coinImgVal], x - Model.cameraPos, y, w, h, null);
+		g.drawImage(View.coinBlocks[coinImgVal], x - model.cameraPos, y, w, h, null);
 	}
 
 	@Override
@@ -100,9 +104,9 @@ public class CoinBlock extends Sprite{
 	}
 
 	@Override
-	public Sprite cloneSprite() {
+	public Sprite cloneSprite(Model m) {
 		// TODO Auto-generated method stub
-		return new CoinBlock(this);
+		return new CoinBlock(this, m);
 	}
 
 }

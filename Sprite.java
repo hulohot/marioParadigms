@@ -20,14 +20,14 @@ public abstract class Sprite {
     	return false;
     }
     
-    public abstract Sprite cloneSprite();
+    public abstract Sprite cloneSprite(Model m);
     
     public boolean checkBrickCollision(Model m, Sprite a, Sprite b) {
         // Check left of brick
-        if (a.x + Model.cameraPos + w < b.x)
+        if (a.x + m.cameraPos + w < b.x)
             return false;
         // Check right of brick
-        else if (a.x + Model.cameraPos > b.x + b.w)
+        else if (a.x + m.cameraPos > b.x + b.w)
             return false;
         // Check top of the brick
         else if (a.y + a.h < b.y)

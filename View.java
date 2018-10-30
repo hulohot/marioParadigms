@@ -9,7 +9,6 @@ import java.awt.Color;
 
 class View extends JPanel
 {
-	JButton b1;
 	Model model;
 	static BufferedImage[] mario_images = null;
 	static BufferedImage[] coinBlocks = null;
@@ -46,7 +45,7 @@ class View extends JPanel
 	{
 		// Tiles the background image for 8000 px surrounding mario on both sides
 		for(int i = -10; i < 10; i++) {
-			g.drawImage(View.background, (800 * i) - (Model.cameraPos / 2), 0 , null);	
+			g.drawImage(View.background, (800 * i) - (model.cameraPos / 2), 0 , null);
 		}
 		
 		// Draws all bricks

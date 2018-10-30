@@ -34,11 +34,12 @@ public class Coin extends Sprite{
         h = (int)ob.getLong("h");
 	}
 	
-	Coin(Coin c) {
+	Coin(Coin c, Model m) {
     	this.x = c.x;
     	this.y = c.y;
     	this.w = c.w;
     	this.h = c.h;
+    	this.model = m;
     }
 
 	@Override
@@ -56,7 +57,7 @@ public class Coin extends Sprite{
 	@Override
 	public void draw(Graphics g) {
 		// TODO Auto-generated method stub
-		g.drawImage(View.coin, x - Model.cameraPos, y, w, h, null);
+		g.drawImage(View.coin, x - model.cameraPos, y, w, h, null);
 	}
 
 	@Override
@@ -75,13 +76,11 @@ public class Coin extends Sprite{
 
 	@Override
 	public boolean isCoin() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public Sprite cloneSprite() {
-		// TODO Auto-generated method stub
-		return new Coin(this);
+	public Sprite cloneSprite(Model m) {
+		return new Coin(this, m);
 	}
 }

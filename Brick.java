@@ -4,12 +4,13 @@ class Brick extends Sprite
 {
 	Model model;
 
-    Brick(int xPos, int yPos, int wDim, int hDim)
+    Brick(int xPos, int yPos, int wDim, int hDim, Model m)
     {
         x = xPos;
         y = yPos;
         w = wDim;
         h = hDim;
+        model = m;
     }
 
     /**
@@ -25,11 +26,12 @@ class Brick extends Sprite
         h = (int)ob.getLong("h");
     }
     
-    Brick(Brick b) {
+    Brick(Brick b, Model m) {
     	this.x = b.x;
     	this.y = b.y;
     	this.w = b.w;
     	this.h = b.h;
+    	this.model = m;
     }
 
 	@Override
@@ -41,7 +43,7 @@ class Brick extends Sprite
 	@Override
 	public void draw(Graphics g) {
 		// TODO Auto-generated method stub
-		g.drawImage(View.brick, x - Model.cameraPos, y, w, h, null);	
+		g.drawImage(View.brick, x - model.cameraPos, y, w, h, null);
 	}
 	
 	@Override
@@ -60,13 +62,11 @@ class Brick extends Sprite
 
 	@Override
 	public boolean isBrick() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public Sprite cloneSprite() {
-		// TODO Auto-generated method stub
-		return new Brick(this);
+	public Sprite cloneSprite(Model m) {
+		return new Brick(this, m);
 	}
 }

@@ -4,7 +4,7 @@ class Mario extends Sprite {
 	int previousX;
 	int previousY;
 	int previousCameraPos;
-	int solidCount = 0;
+	int solidCount;
 	int marioSpriteVal;
 	int xSpeed = 10;
 	double verticalVelocity;
@@ -16,6 +16,7 @@ class Mario extends Sprite {
 		y = 100;
 		w = 60;
 		h = 95;
+		solidCount = 0;
 	}
 
 	Mario(Model m, Json ob) {
@@ -24,13 +25,21 @@ class Mario extends Sprite {
 		y = (int) ob.getLong("y");
 		w = (int) ob.getLong("w");
 		h = (int) ob.getLong("h");
+		solidCount = 0;
 	}
 	
-	Mario(Mario m) {
+	Mario(Mario m, Model newModel) {
     	this.x = m.x;
     	this.y = m.y;
     	this.w = m.w;
     	this.h = m.h;
+    	this.previousX = m.previousX;
+    	this.previousY = m.previousY;
+    	this.previousCameraPos = m.previousCameraPos;
+    	this.verticalVelocity = m.verticalVelocity;
+    	this.marioSpriteVal = m.marioSpriteVal;
+    	this.solidCount = m.solidCount;
+    	model = newModel;
     }
 
 	public void update() {
@@ -81,14 +90,14 @@ class Mario extends Sprite {
 
 	void setBarrier(Sprite b, int brickX, int brickY, int brickW, int brickH) {
 		// Left of Brick Barrier
-		if ((x + Model.cameraPos + w > brickX) && (previousX + Model.cameraPos < brickX) && (previousY + h > brickY)
+		if ((x + model.cameraPos + w > brickX) && (previousX + model.cameraPos < brickX) && (previousY + h > brickY)
 				&& (previousY < brickY + brickH)) {
-			Model.cameraPos -= xSpeed;
+			model.cameraPos -= xSpeed;
 		}
 		// Right of Brick Barrier
-		if ((previousX + Model.cameraPos + w > brickX + brickW) && (previousX + Model.cameraPos < brickX + brickW)
+		if ((previousX + model.cameraPos + w > brickX + brickW) && (previousX + model.cameraPos < brickX + brickW)
 				&& (previousY + h > brickY) && (previousY < brickY + brickH)) {
-			Model.cameraPos += xSpeed;
+			model.cameraPos += xSpeed;
 		}
 		// Top of Brick Barrier
 		if ((y + h >= brickY) && (previousY + h <= brickY)) {
@@ -106,14 +115,16 @@ class Mario extends Sprite {
 	}
 
 	void jump() {
-		if (solidCount < 5)
-			verticalVelocity -= 7.0;
+		if (solidCount < 5) {
+			verticalVelocity -= 60.0;
+//			model.jumpCount++;
+		}
 	}
 
 	void setPrevious() {
 		previousX = x;
 		previousY = y;
-		previousCameraPos = Model.cameraPos;
+		previousCameraPos = model.cameraPos;
 	}
 
 	@Override
@@ -139,13 +150,11 @@ class Mario extends Sprite {
 
 	@Override
 	public boolean isMario() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public Sprite cloneSprite() {
-		// TODO Auto-generated method stub
-		return new Mario(this);
+	public Sprite cloneSprite(Model m) {
+		return new Mario(this, m);
 	}
 }
