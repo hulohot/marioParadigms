@@ -6,11 +6,13 @@ public class CoinBlock extends Sprite{
 	static MySoundClip coin;
 	
 	// Coin block is full (0) until it runs out of coins (1)
-	int coinBlockVal = 5;
-	int coinImgVal = 0;	
+	int coinBlockVal;
+	int coinImgVal;	
 	
 	// Coin Blocks have a static width and height
 	CoinBlock(Model m, int xx, int yy, int ww, int hh){
+		coinBlockVal = 0;
+		coinImgVal = 0;
 		model = m;
 		x = xx;
 		y = yy;
@@ -47,33 +49,17 @@ public class CoinBlock extends Sprite{
     	this.w = c.w;
     	this.h = c.h;
     	this.coinBlockVal = c.coinBlockVal;
-    	this.coinImgVal = c.coinImgVal;
+//    	this.coinImgVal = c.coinImgVal;
     	this.model = m;
     }
 	
-	public void reduceCoins() {
-		// Removes one coin from the block
-		if(coinBlockVal > 1)
-			coinBlockVal--;
-		else {
-			coinBlockVal--;
-			coinImgVal = 1;			
-		}
-	}
-	
-	// Checks if bottom of block is hit and spawns coin
-	public void spawnCoin() {
-		if(coinBlockVal > 0) {
-			model.addCoin(x - model.cameraPos, y - 50, w, h);
-			reduceCoins();
-			coin.play();
-			model.coinCount++;
-		}
-	}
-	
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
+		if(coinBlockVal < 5)
+			coinImgVal = 0;
+		else {
+			coinImgVal = 1;			
+		}
 	}
 
 	@Override
@@ -105,7 +91,6 @@ public class CoinBlock extends Sprite{
 
 	@Override
 	public Sprite cloneSprite(Model m) {
-		// TODO Auto-generated method stub
 		return new CoinBlock(this, m);
 	}
 

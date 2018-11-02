@@ -6,17 +6,17 @@ class Model {
 	int dest_x1, dest_x2;
 	int dest_y1, dest_y2;
 	int xx, yy, ww, hh;
-	int jumpCount;
-	int coinCount;
-	int d = 25;
-	int k = 6;
 	int cameraPos;
+	int previousCameraPos;
+	static int d = 1;
+	static int k = 5;
 	String fileName = "map.json";
+	
+	boolean isCopy;
 
 	Model() {
-		jumpCount = 0;
-		coinCount = 0;
-		cameraPos = 50; // Change this back
+		isCopy = false;
+		cameraPos = 0;
 		sprites = new ArrayList<Sprite>();
 		mario = new Mario(this);
 		sprites.add(mario);
@@ -24,17 +24,16 @@ class Model {
 	}
 	
 	Model(Model m){
-		this.jumpCount = m.jumpCount;
-		this.coinCount = m.coinCount;
+		isCopy = true;
 		this.cameraPos = m.cameraPos;
-		sprites = new ArrayList<Sprite>();
-		Iterator<Sprite> it = m.sprites.iterator();
-		while(it.hasNext()) {
-			Sprite sprite = it.next();
+		this.previousCameraPos = m.previousCameraPos;
+		this.sprites = new ArrayList<Sprite>();
+		for(int i = 0; i < m.sprites.size(); i++) {
+			Sprite sprite = m.sprites.get(i);
 			Sprite s = sprite.cloneSprite(m);
-			sprites.add(s);
+			this.sprites.add(s);
 			if(s.isMario())
-				mario = (Mario)s;
+				this.mario = (Mario)s;
 		}
 	}
 
@@ -52,7 +51,6 @@ class Model {
 	public void setDestination2(int x, int y) {
 		this.dest_x2 = x;
 		this.dest_y2 = y;
-
 		determineBoundries();
 	}
 	
@@ -64,7 +62,6 @@ class Model {
 	}
 
 	public void addBrick() {
-		
 		Brick b = new Brick(xx + cameraPos, yy, ww, hh, this);
 		sprites.add(b);
 	}
@@ -74,8 +71,8 @@ class Model {
 		sprites.add(c);
 	}
 	
-	public void addCoin(int x, int y, int w, int h) {
-		Sprite c = new Coin(this, x + cameraPos, y, w, h);
+	public void addCoin(Sprite s) {
+		Sprite c = new Coin(this, s.x, s.y - 50, s.w, s.h);
 		sprites.add(c);
 	}
 	
@@ -121,21 +118,15 @@ class Model {
 	}
 	
 	void doAction(Action action) {
-		mario.setPrevious(); 
 		if(action == Action.RunRight){
-			cameraPos += 10;
+			mario.runRight();
 		}
-		if(action == Action.Jump){
+		else if(action == Action.Jump){
 			mario.jump();
-			jumpCount++;
 		}
-		if(action == Action.RunAndJump){
+		else if(action == Action.RunAndJump){
 			mario.jump();
-			cameraPos += 10;
-			jumpCount++;
-		}
-		if(action == Action.Wait) {
-			
+			mario.runRight();
 		}
 	}
 	
@@ -143,25 +134,21 @@ class Model {
 	{
 		// Evaluate the state
 		if(depth >= d)
-			return (mario.x + cameraPos) + (5000 * coinCount) - (2 * jumpCount);
-
+			return (cameraPos) + (5000 * mario.coinCount) - (2 * mario.jumpCount);
+			
 		// Simulate the action
 		Model copy = new Model(this); // uses the copy constructor
 		copy.doAction(action); // like what Controller.update did before
 		copy.update(); // advance simulated time
-
+		
 		// Recurse
 		if(depth % k != 0)
 		   return copy.evaluateAction(action, depth + 1);
 		else
 		{
 		   double best = copy.evaluateAction(Action.RunRight, depth + 1);
-		   best = Math.max(best,
-			   copy.evaluateAction(Action.Jump, depth + 1));
-		   best = Math.max(best,
-				   copy.evaluateAction(Action.Wait, depth + 1));
-		   best = Math.max(best,
-			   copy.evaluateAction(Action.RunAndJump, depth + 1));
+		   best = Math.max(best, copy.evaluateAction(Action.Jump, depth + 1));
+		   best = Math.max(best, copy.evaluateAction(Action.RunAndJump, depth + 1));
 		   return best;
 		}
 	}

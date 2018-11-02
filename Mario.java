@@ -3,9 +3,10 @@ import java.awt.Graphics;
 class Mario extends Sprite {
 	int previousX;
 	int previousY;
-	int previousCameraPos;
 	int solidCount;
 	int marioSpriteVal;
+	int jumpCount;
+	int coinCount;
 	int xSpeed = 10;
 	double verticalVelocity;
 	Model model;
@@ -17,6 +18,9 @@ class Mario extends Sprite {
 		w = 60;
 		h = 95;
 		solidCount = 0;
+		jumpCount = 0;
+		coinCount = 0;
+		verticalVelocity = 0;
 	}
 
 	Mario(Model m, Json ob) {
@@ -29,47 +33,40 @@ class Mario extends Sprite {
 	}
 	
 	Mario(Mario m, Model newModel) {
+		this.model = newModel;
     	this.x = m.x;
     	this.y = m.y;
     	this.w = m.w;
     	this.h = m.h;
-    	this.previousX = m.previousX;
+    	this.previousY = m.previousX;
     	this.previousY = m.previousY;
-    	this.previousCameraPos = m.previousCameraPos;
+    	this.coinCount = m.coinCount;
+    	this.jumpCount = m.jumpCount;
     	this.verticalVelocity = m.verticalVelocity;
     	this.marioSpriteVal = m.marioSpriteVal;
     	this.solidCount = m.solidCount;
-    	model = newModel;
     }
 
 	public void update() {
-		verticalVelocity += 3.14159;
+		verticalVelocity += 5;
 		y += verticalVelocity;
+		solidCount++;
 
 		if (y > 295) {
 			verticalVelocity = 0.0;
 			y = 295; // snap back to the ground
-		}
-
-		if (verticalVelocity == 0.0)
 			solidCount = 0;
-		else {
-			solidCount++;
 		}
-
+		
 		generalCollision();
-
 	}
 
 	// Collides with sprites chosen
 	void generalCollision() {
 		for (int i = 0; i < model.sprites.size(); i++) {
-			Sprite mario = model.sprites.get(0);
-			Sprite other = model.sprites.get(i);
-			if (other.isBrick() || other.isCoinBlock()) {
-				if (checkBrickCollision(model, mario, other)) {
-					setBarrier(other, other.x, other.y, other.w, other.h);
-				}
+			Sprite s = model.sprites.get(i);
+			if ((s.isBrick() || s.isCoinBlock()) && checkCollision(model, this, s)) {
+				setBarrier(s);
 			}
 		}
 	}
@@ -84,59 +81,68 @@ class Mario extends Sprite {
 		return marioSpriteVal;
 	}
 
-	void hitBottomCoinBlock(Sprite b) {
-		((CoinBlock) b).spawnCoin();
-	}
-
-	void setBarrier(Sprite b, int brickX, int brickY, int brickW, int brickH) {
+	void setBarrier(Sprite b) {
 		// Left of Brick Barrier
-		if ((x + model.cameraPos + w > brickX) && (previousX + model.cameraPos < brickX) && (previousY + h > brickY)
-				&& (previousY < brickY + brickH)) {
+		if ((x + model.cameraPos + w >= b.x) && (model.previousCameraPos + previousX < b.x))
+//				&& (previousY + h > b.y) && (previousY < b.y + b.h)) 
+		{
 			model.cameraPos -= xSpeed;
 		}
 		// Right of Brick Barrier
-		if ((previousX + model.cameraPos + w > brickX + brickW) && (previousX + model.cameraPos < brickX + brickW)
-				&& (previousY + h > brickY) && (previousY < brickY + brickH)) {
+		if ((x + model.previousCameraPos > b.x + b.w) && (model.cameraPos + x <= b.x + b.w))
+//				&& (previousY + h > b.y) && (previousY < b.y + b.h))
+		{
 			model.cameraPos += xSpeed;
 		}
 		// Top of Brick Barrier
-		if ((y + h >= brickY) && (previousY + h <= brickY)) {
+		if ((y + h >= b.y) && (previousY + h <= b.y)) {
 			verticalVelocity = 0.0;
-			y = brickY - h - 1;
+			y = b.y - h - 1;
 			solidCount = 0;
 		}
 		// Bottom of Brick Barrier
-		if ((y <= brickY + brickH) && (previousY > brickY + brickH)) {
-			y = brickY + brickH + 1;
+		if ((y <= b.y + b.h) && (previousY > b.y + b.h)) {
+			y = b.y + b.h + 1;
 			verticalVelocity = 0.0;
-			if (b.isCoinBlock())
-				hitBottomCoinBlock(b);
+			System.out.println("SolidCount is: " + solidCount);
+			if (b.isCoinBlock() && ((CoinBlock) b).coinBlockVal < 5 && solidCount < 4) {
+				((CoinBlock) b).coinBlockVal++;
+				coinCount++;
+				model.addCoin(b);
+			}
 		}
+	}
+	
+	void runRight() {
+		model.cameraPos += xSpeed;
+	}
+	
+	void runLeft() {
+		model.cameraPos -= xSpeed;
 	}
 
 	void jump() {
-		if (solidCount < 5) {
-			verticalVelocity -= 60.0;
-//			model.jumpCount++;
+		if (solidCount < 4) {
+			verticalVelocity -= 15.0;
+			jumpCount++;
 		}
+//		System.out.println("Mario's Jump Count: " + jumpCount);
 	}
 
 	void setPrevious() {
-		previousX = x;
-		previousY = y;
-		previousCameraPos = model.cameraPos;
+		this.previousX = x;
+		this.previousY = y;
+		model.previousCameraPos = model.cameraPos;
 	}
 
 	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
 		int j = this.getSpriteVal();
 		g.drawImage(View.mario_images[j], this.x, this.y, null);
 	}
 
 	@Override
 	public Json marshal() {
-		// TODO Auto-generated method stub
 		Json ob = Json.newObject();
 
 		ob.add("type", "mario");

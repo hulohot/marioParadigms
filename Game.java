@@ -29,7 +29,6 @@ public class Game extends JFrame {
 	}
 
 	public void run() {
-//		model.update();
 		while (true) {
 			controller.updateNew();
 //			controller.update();

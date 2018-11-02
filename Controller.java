@@ -97,59 +97,50 @@ class Controller implements ActionListener, MouseListener, KeyListener {
 	public void keyTyped(KeyEvent e) {
 	}
 
-	void doAction(Action action) {
-		model.mario.setPrevious();
-		if (action == Action.RunRight) {
-			model.cameraPos += 10;
-			model.mario.changeSpriteVal();
-		}
-		if (action == Action.RunAndJump) {
-			model.cameraPos += 10;
-			model.mario.changeSpriteVal();
-			model.mario.jump();
-			model.jumpCount++;
-		}
-		if (action == Action.Jump) {
-			model.mario.jump();
-			model.jumpCount++;
-		}
-		if (action == Action.Wait) {
-
-		}
-	}
+//	void doAction(Action action) {
+//		model.mario.setPrevious();
+//		if (action == Action.RunRight) {
+//			model.mario.runRight();
+//			model.mario.changeSpriteVal();
+//		}
+//		if (action == Action.RunAndJump) {
+//			model.mario.runRight();
+//			model.mario.changeSpriteVal();
+//			model.mario.jump();
+//		}
+//		if (action == Action.Jump) {
+//			model.mario.jump();
+//		}
+//	}
 
 	void updateNew() {
 		// Evaluate each possible action
+		model.mario.setPrevious();
 		double score_run = model.evaluateAction(Action.RunRight, 0);
 		double score_jump = model.evaluateAction(Action.Jump, 0);
 		double score_jump_and_run = model.evaluateAction(Action.RunAndJump, 0);
-		double score_wait = model.evaluateAction(Action.Wait, 0);
-		System.out.println("Coin Count: " + model.coinCount);
-		System.out.println("Jump Count: " + model.jumpCount);
+		System.out.println("Coin Count: " + model.mario.coinCount);
+		System.out.println("Jump Count: " + model.mario.jumpCount);
 		System.out.println("Run: " + score_run);
 		System.out.println("Jump: " + score_jump);
 		System.out.println("Jump and Run: " + score_jump_and_run);
-		System.out.println("Wait: " + score_wait);
 
-		// Do the best one
-		if (score_wait > score_jump_and_run && score_wait > score_jump_and_run && score_wait > score_jump)
-			doAction(Action.Wait);
 		if (score_jump_and_run > score_jump && score_jump_and_run > score_run)
-			doAction(Action.RunAndJump);
+			model.doAction(Action.RunAndJump);
 		else if (score_jump > score_run)
-			doAction(Action.Jump);
+			model.doAction(Action.Jump);
 		else
-			doAction(Action.RunRight);
+			model.doAction(Action.RunRight);
 	}
 
 	void update() {
 		model.mario.setPrevious();
 		if (keyRight) {
-			model.cameraPos += 10;
+			model.mario.runRight();
 			model.mario.changeSpriteVal();
 		}
 		if (keyLeft) {
-			model.cameraPos -= 10;
+			model.mario.runLeft();
 			model.mario.changeSpriteVal();
 		}
 		if (keySpace) {
