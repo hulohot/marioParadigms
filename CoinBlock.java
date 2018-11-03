@@ -49,9 +49,16 @@ public class CoinBlock extends Sprite{
     	this.w = c.w;
     	this.h = c.h;
     	this.coinBlockVal = c.coinBlockVal;
-//    	this.coinImgVal = c.coinImgVal;
     	this.model = m;
     }
+	
+	public void generateCoin(int solidCount, Sprite m) {
+		if(solidCount < 4 && coinBlockVal < 5) {
+			coinBlockVal++;
+			model.addCoin(this);
+			((Mario) m).coinCount++;
+		}
+	}
 	
 	@Override
 	public void update() {
@@ -64,28 +71,23 @@ public class CoinBlock extends Sprite{
 
 	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
 		g.drawImage(View.coinBlocks[coinImgVal], x - model.cameraPos, y, w, h, null);
 	}
 
 	@Override
 	public Json marshal() {
-		// TODO Auto-generated method stub
 		Json ob = Json.newObject();
-		
 		ob.add("type", "coinBlock");
 		ob.add("x", this.x);
 		ob.add("y", this.y);
 		ob.add("w", this.w);
 		ob.add("h", this.h);
 		ob.add("coinBlockVal", this.coinBlockVal);
-		
 		return ob;
 	}
 
 	@Override
 	public boolean isCoinBlock() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 

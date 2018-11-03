@@ -8,8 +8,6 @@ class Model {
 	int xx, yy, ww, hh;
 	int cameraPos;
 	int previousCameraPos;
-	static int d = 1;
-	static int k = 5;
 	String fileName = "map.json";
 	
 	boolean isCopy;
@@ -27,10 +25,11 @@ class Model {
 		isCopy = true;
 		this.cameraPos = m.cameraPos;
 		this.previousCameraPos = m.previousCameraPos;
+		
 		this.sprites = new ArrayList<Sprite>();
 		for(int i = 0; i < m.sprites.size(); i++) {
 			Sprite sprite = m.sprites.get(i);
-			Sprite s = sprite.cloneSprite(m);
+			Sprite s = sprite.cloneSprite(this);
 			this.sprites.add(s);
 			if(s.isMario())
 				this.mario = (Mario)s;
@@ -132,6 +131,8 @@ class Model {
 	
 	double evaluateAction(Action action, int depth)
 	{
+		int d = 10;
+		int k = 5;
 		// Evaluate the state
 		if(depth >= d)
 			return (cameraPos) + (5000 * mario.coinCount) - (2 * mario.jumpCount);

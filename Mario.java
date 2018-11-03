@@ -31,21 +31,21 @@ class Mario extends Sprite {
 		h = (int) ob.getLong("h");
 		solidCount = 0;
 	}
-	
-	Mario(Mario m, Model newModel) {
+
+	Mario(Mario that, Model newModel) {
 		this.model = newModel;
-    	this.x = m.x;
-    	this.y = m.y;
-    	this.w = m.w;
-    	this.h = m.h;
-    	this.previousY = m.previousX;
-    	this.previousY = m.previousY;
-    	this.coinCount = m.coinCount;
-    	this.jumpCount = m.jumpCount;
-    	this.verticalVelocity = m.verticalVelocity;
-    	this.marioSpriteVal = m.marioSpriteVal;
-    	this.solidCount = m.solidCount;
-    }
+		this.x = that.x;
+		this.y = that.y;
+		this.w = that.w;
+		this.h = that.h;
+		this.previousY = that.previousX;
+		this.previousY = that.previousY;
+		this.coinCount = that.coinCount;
+		this.jumpCount = that.jumpCount;
+		this.verticalVelocity = that.verticalVelocity;
+		this.marioSpriteVal = that.marioSpriteVal;
+		this.solidCount = that.solidCount;
+	}
 
 	public void update() {
 		verticalVelocity += 5;
@@ -57,7 +57,7 @@ class Mario extends Sprite {
 			y = 295; // snap back to the ground
 			solidCount = 0;
 		}
-		
+
 		generalCollision();
 	}
 
@@ -83,14 +83,13 @@ class Mario extends Sprite {
 
 	void setBarrier(Sprite b) {
 		// Left of Brick Barrier
-		if ((x + model.cameraPos + w >= b.x) && (model.previousCameraPos + previousX < b.x))
-//				&& (previousY + h > b.y) && (previousY < b.y + b.h)) 
+		if ((x + model.cameraPos + w >= b.x) && (model.previousCameraPos + previousX < b.x)
+				&& (previousY + h > b.y) && (previousY < b.y + b.h)) 
 		{
 			model.cameraPos -= xSpeed;
 		}
 		// Right of Brick Barrier
-		if ((x + model.previousCameraPos > b.x + b.w) && (model.cameraPos + x <= b.x + b.w))
-//				&& (previousY + h > b.y) && (previousY < b.y + b.h))
+		if ((model.cameraPos + x <= b.x + b.w) && (previousX + model.previousCameraPos > b.x + b.w))
 		{
 			model.cameraPos += xSpeed;
 		}
@@ -104,21 +103,21 @@ class Mario extends Sprite {
 		if ((y <= b.y + b.h) && (previousY > b.y + b.h)) {
 			y = b.y + b.h + 1;
 			verticalVelocity = 0.0;
-			System.out.println("SolidCount is: " + solidCount);
-			if (b.isCoinBlock() && ((CoinBlock) b).coinBlockVal < 5 && solidCount < 4) {
-				((CoinBlock) b).coinBlockVal++;
-				coinCount++;
-				model.addCoin(b);
-			}
+			if(b.isCoinBlock())
+				((CoinBlock) b).generateCoin(solidCount, this);
 		}
 	}
-	
+
 	void runRight() {
 		model.cameraPos += xSpeed;
+		if(model.isCopy == false)
+			changeSpriteVal();
 	}
-	
+
 	void runLeft() {
 		model.cameraPos -= xSpeed;
+		if(model.isCopy == false)
+			changeSpriteVal();
 	}
 
 	void jump() {
@@ -126,7 +125,6 @@ class Mario extends Sprite {
 			verticalVelocity -= 15.0;
 			jumpCount++;
 		}
-//		System.out.println("Mario's Jump Count: " + jumpCount);
 	}
 
 	void setPrevious() {
