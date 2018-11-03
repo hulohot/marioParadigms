@@ -2,10 +2,19 @@ import java.awt.Graphics;
 
 public abstract class Sprite {
 	int x, y, w, h;
+	Model model;
+	
+	//////////////////////////////////////
+	/////////// Abstract Methods /////////
+	//////////////////////////////////////
 	
 	public abstract void update();
 	public abstract void draw(Graphics g);
     public abstract Json marshal();
+    
+	//////////////////////////////////////
+	/////// Identification Methods ///////
+	//////////////////////////////////////
     
     public boolean isBrick() {
     	return false;
@@ -19,6 +28,10 @@ public abstract class Sprite {
     public boolean isCoinBlock() {
     	return false;
     }
+    
+	//////////////////////////////////////
+	////////// Utility Methods ///////////
+	//////////////////////////////////////
     
     public abstract Sprite cloneSprite(Model m);
     

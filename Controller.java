@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 
 class Controller implements ActionListener, MouseListener, KeyListener {
+
 	View view;
 	Model model;
 
@@ -19,6 +20,10 @@ class Controller implements ActionListener, MouseListener, KeyListener {
 	boolean keyC;
 	boolean keySpace;
 
+	//////////////////////////////////////
+	/////////// Utility Methods //////////
+	//////////////////////////////////////
+
 	Controller(Model m) {
 		model = m;
 	}
@@ -26,6 +31,10 @@ class Controller implements ActionListener, MouseListener, KeyListener {
 	void setView(View v) {
 		view = v;
 	}
+
+	//////////////////////////////////////
+	//////// Mouse Action Methods ////////
+	//////////////////////////////////////
 
 	public void actionPerformed(ActionEvent e) {
 	}
@@ -52,6 +61,10 @@ class Controller implements ActionListener, MouseListener, KeyListener {
 		model.setDestination2(e.getX(), e.getY());
 		model.addBrick();
 	}
+
+	//////////////////////////////////////
+	////////// Key Action Methods ////////
+	//////////////////////////////////////
 
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
@@ -95,6 +108,10 @@ class Controller implements ActionListener, MouseListener, KeyListener {
 
 	public void keyTyped(KeyEvent e) {
 	}
+
+	//////////////////////////////////////
+	//////////////// Update //////////////
+	//////////////////////////////////////
 
 	void updateNew() {
 		// Evaluate each possible action

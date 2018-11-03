@@ -1,6 +1,7 @@
 import java.awt.Graphics;
 
 class Mario extends Sprite {
+
 	int previousX;
 	int previousY;
 	int solidCount;
@@ -8,8 +9,12 @@ class Mario extends Sprite {
 	int jumpCount;
 	int coinCount;
 	int xSpeed = 10;
+
 	double verticalVelocity;
-	Model model;
+
+	//////////////////////////////////////
+	///////////// Constructors ///////////
+	//////////////////////////////////////
 
 	Mario(Model m) {
 		model = m;
@@ -47,6 +52,10 @@ class Mario extends Sprite {
 		this.solidCount = that.solidCount;
 	}
 
+	//////////////////////////////////////
+	/////////// Utility Methods //////////
+	//////////////////////////////////////
+
 	public void update() {
 		verticalVelocity += 5;
 		y += verticalVelocity;
@@ -61,7 +70,6 @@ class Mario extends Sprite {
 		generalCollision();
 	}
 
-	// Collides with sprites chosen
 	void generalCollision() {
 		for (int i = 0; i < model.sprites.size(); i++) {
 			Sprite s = model.sprites.get(i);
@@ -71,26 +79,14 @@ class Mario extends Sprite {
 		}
 	}
 
-	public void changeSpriteVal() {
-		marioSpriteVal++;
-		if (marioSpriteVal == 5)
-			marioSpriteVal = 0;
-	}
-
-	public int getSpriteVal() {
-		return marioSpriteVal;
-	}
-
 	void setBarrier(Sprite b) {
 		// Left of Brick Barrier
-		if ((x + model.cameraPos + w >= b.x) && (model.previousCameraPos + previousX < b.x)
-				&& (previousY + h > b.y) && (previousY < b.y + b.h)) 
-		{
+		if ((x + model.cameraPos + w >= b.x) && (model.previousCameraPos + previousX < b.x) && (previousY + h > b.y)
+				&& (previousY < b.y + b.h)) {
 			model.cameraPos -= xSpeed;
 		}
 		// Right of Brick Barrier
-		if ((model.cameraPos + x <= b.x + b.w) && (previousX + model.previousCameraPos > b.x + b.w))
-		{
+		if ((model.cameraPos + x <= b.x + b.w) && (previousX + model.previousCameraPos > b.x + b.w)) {
 			model.cameraPos += xSpeed;
 		}
 		// Top of Brick Barrier
@@ -103,20 +99,35 @@ class Mario extends Sprite {
 		if ((y <= b.y + b.h) && (previousY > b.y + b.h)) {
 			y = b.y + b.h + 1;
 			verticalVelocity = 0.0;
-			if(b.isCoinBlock())
+			if (b.isCoinBlock())
 				((CoinBlock) b).generateCoin(solidCount, this);
 		}
 	}
 
+	@Override
+	public void draw(Graphics g) {
+		int j = this.getSpriteVal();
+		g.drawImage(View.mario_images[j], this.x, this.y, null);
+	}
+
+	@Override
+	public Sprite cloneSprite(Model m) {
+		return new Mario(this, m);
+	}
+
+	//////////////////////////////////////
+	////////// Movement Methods //////////
+	//////////////////////////////////////
+
 	void runRight() {
 		model.cameraPos += xSpeed;
-		if(model.isCopy == false)
+		if (model.isCopy == false)
 			changeSpriteVal();
 	}
 
 	void runLeft() {
 		model.cameraPos -= xSpeed;
-		if(model.isCopy == false)
+		if (model.isCopy == false)
 			changeSpriteVal();
 	}
 
@@ -127,16 +138,17 @@ class Mario extends Sprite {
 		}
 	}
 
-	void setPrevious() {
-		this.previousX = x;
-		this.previousY = y;
-		model.previousCameraPos = model.cameraPos;
-	}
+	//////////////////////////////////////
+	///////// Attribute Getters //////////
+	//////////////////////////////////////
 
 	@Override
-	public void draw(Graphics g) {
-		int j = this.getSpriteVal();
-		g.drawImage(View.mario_images[j], this.x, this.y, null);
+	public boolean isMario() {
+		return true;
+	}
+
+	public int getSpriteVal() {
+		return marioSpriteVal;
 	}
 
 	@Override
@@ -152,13 +164,20 @@ class Mario extends Sprite {
 		return ob;
 	}
 
-	@Override
-	public boolean isMario() {
-		return true;
+	//////////////////////////////////////
+	///////// Attribute Setters //////////
+	//////////////////////////////////////
+
+	public void changeSpriteVal() {
+		marioSpriteVal++;
+		if (marioSpriteVal == 5)
+			marioSpriteVal = 0;
 	}
 
-	@Override
-	public Sprite cloneSprite(Model m) {
-		return new Mario(this, m);
+	void setPrevious() {
+		this.previousX = x;
+		this.previousY = y;
+		model.previousCameraPos = model.cameraPos;
 	}
+
 }
