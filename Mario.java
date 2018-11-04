@@ -100,7 +100,7 @@ class Mario extends Sprite {
 			y = b.y + b.h + 1;
 			verticalVelocity = 0.0;
 			if (b.isCoinBlock())
-				((CoinBlock) b).generateCoin(solidCount, this);
+				((CoinBlock) b).generateCoin(this);
 		}
 	}
 

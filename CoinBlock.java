@@ -6,6 +6,8 @@ public class CoinBlock extends Sprite {
 
 	int coinBlockVal;
 	int coinImgVal;
+	int coinTimer;
+	boolean coinHit;
 
 	//////////////////////////////////////
 	///////////// Constructors ///////////
@@ -14,6 +16,8 @@ public class CoinBlock extends Sprite {
 	CoinBlock(Model m, int xx, int yy, int ww, int hh) {
 		coinBlockVal = 0;
 		coinImgVal = 0;
+		coinTimer = 0;
+		coinHit = false;
 		model = m;
 		x = xx;
 		y = yy;
@@ -48,6 +52,8 @@ public class CoinBlock extends Sprite {
 		this.w = c.w;
 		this.h = c.h;
 		this.coinBlockVal = c.coinBlockVal;
+		this.coinTimer = c.coinTimer;
+		this.coinHit = c.coinHit;
 		this.model = m;
 	}
 
@@ -55,8 +61,9 @@ public class CoinBlock extends Sprite {
 	/////////// Utility Methods //////////
 	//////////////////////////////////////
 
-	public void generateCoin(int solidCount, Sprite m) {
-		if (solidCount < 4 && coinBlockVal < 5) {
+	public void generateCoin(Sprite m) {
+		if (!coinHit && coinTimer < 1 && coinBlockVal < 5) {
+			coinHit = !coinHit;
 			coinBlockVal++;
 			model.addCoin(this);
 			((Mario) m).coinCount++;
@@ -72,6 +79,14 @@ public class CoinBlock extends Sprite {
 		else {
 			coinImgVal = 1;
 		}
+		if(coinHit) {
+			coinHit = !coinHit;
+			coinTimer++;
+		}
+		else {
+			coinTimer = 0;
+		}
+			
 	}
 
 	@Override
