@@ -1,3 +1,3 @@
-enum Actions {
-	RunLeft, RunRight, Wait, Jump;
+enum Action {
+	RunRight, RunAndJump, Wait, Jump;
 }
