@@ -8,6 +8,7 @@ class Model {
 	int xx, yy, ww, hh;
 	int cameraPos;
 	int previousCameraPos;
+	double bestScore;
 	String fileName = "map.json";
 	boolean isCopy;
 
@@ -20,7 +21,9 @@ class Model {
 		cameraPos = 0;
 		sprites = new ArrayList<Sprite>();
 		mario = new Mario(this);
+		Menu menu = new Menu(this);
 		sprites.add(mario);
+		sprites.add(menu);
 		unmarshal();
 	}
 
@@ -117,6 +120,8 @@ class Model {
 				sprites.add(new CoinBlock(this, j));
 			else if (str.equals("coin"))
 				sprites.add(new Coin(this, j));
+			else if (str.equals("menu"))
+				sprites.add(new Menu(this, j));
 		}
 	}
 
@@ -164,6 +169,7 @@ class Model {
 			double best = copy.evaluateAction(Action.RunRight, depth + 1);
 			best = Math.max(best, copy.evaluateAction(Action.Jump, depth + 1));
 			best = Math.max(best, copy.evaluateAction(Action.RunAndJump, depth + 1));
+			bestScore = best;
 			return best;
 		}
 	}
